@@ -1,7 +1,20 @@
-export default function Home() {
-  return (
-    <div className={"main"}>
+import styled from "styled-components";
+import {useEffect} from "react";
+import {Api} from "../api/hello";
 
-    </div>
-  )
+const Main = styled.div`
+    background: blue;
+`;
+
+export default function Home() {
+    useEffect(() => {
+        const api = new Api();
+        api.getNames();
+    }, []);
+
+    return (
+        <Main>
+            hui
+        </Main>
+    )
 }
