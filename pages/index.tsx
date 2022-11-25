@@ -1,20 +1,27 @@
+import { observer } from "mobx-react-lite";
+import wholeData from "../src/store/wholeData";
+import store from "../src/store/wholeData";
 import styled from "styled-components";
-import {useEffect} from "react";
-import {Api} from "../api/hello";
+import { FC } from "react";
+import { CategorySelector } from "../src/components/CategorySelector";
 
-const Main = styled.div`
-    background: blue;
+const StyledCategoriesGrid = styled.div`
+  display: grid;
+  gap: 50px;
+  grid-template-columns: auto auto auto;
 `;
 
-export default function Home() {
-    useEffect(() => {
-        const api = new Api();
-        api.getNames();
-    }, []);
+const Home: FC = observer(() => {
+  if (!store.storage?.length) return null;
 
-    return (
-        <Main>
-            hui
-        </Main>
-    )
-}
+  console.log(wholeData.storage, "INDEX");
+  return (
+    <StyledCategoriesGrid>
+      {store.storage.map((category) => {
+        return <CategorySelector name={category.name} id={category.groupId} />;
+      })}
+    </StyledCategoriesGrid>
+  );
+});
+
+export default Home;
