@@ -1,27 +1,18 @@
-import { observer } from "mobx-react-lite";
-import wholeData from "../src/store/wholeData";
-import store from "../src/store/wholeData";
-import styled from "styled-components";
-import { FC } from "react";
-import { CategorySelector } from "../src/components/CategorySelector";
+import Root from '../components/Root'
+import {initializeStore} from "../store";
+import {getSnapshot} from "mobx-state-tree";
+import IndexPage from "../components/IndexPage";
 
-const StyledCategoriesGrid = styled.div`
-  display: grid;
-  gap: 50px;
-  grid-template-columns: auto auto auto;
-`;
+export default function Home(props) {
+	return (
+		<Root title="Index Page">
+			<IndexPage {...props} />
+		</Root>
+	)
+}
 
-const Home: FC = observer(() => {
-  if (!store.storage?.length) return null;
+export function getServerSideProps() {
+	const store = initializeStore();
 
-  console.log(wholeData.storage, "INDEX");
-  return (
-    <StyledCategoriesGrid>
-      {store.storage.map((category) => {
-        return <CategorySelector name={category.name} id={category.groupId} />;
-      })}
-    </StyledCategoriesGrid>
-  );
-});
-
-export default Home;
+	return {props: {initialState: getSnapshot(store)}}
+}

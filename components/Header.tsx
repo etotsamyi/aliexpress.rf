@@ -1,9 +1,9 @@
-import { FC } from "react";
-import { LogoIcon } from "../icons/LogoIcon";
+import {FC, useCallback} from "react";
+import {LogoIcon} from "../icons/LogoIcon";
+import {observer} from "mobx-react-lite";
+import {CartLogo} from "../icons/CartLogo";
 import styled from "styled-components";
-import Link from "next/link";
-import { observer } from "mobx-react-lite";
-import { CartLogo } from "../icons/CartLogo";
+import {IStore} from "../store";
 
 const StyledHeader = styled.div`
   height: 45px;
@@ -14,7 +14,7 @@ const StyledHeader = styled.div`
   overflow: visible;
 `;
 
-const StyledHeaderLogo = styled(Link)`
+const StyledHeaderLogo = styled.div`
   background: #970101;
   border-right: solid 1px yellow;
   padding: 0 30px;
@@ -78,18 +78,32 @@ const StyledCartBlock = styled.div`
     }
 `;
 
-export const Header: FC = observer(() => {
-  return (
-    <StyledHeader>
-      <StyledHeaderLogo href={"/"}>
-        <StyledLogoIcon>
-          <LogoIcon />
-        </StyledLogoIcon>
-        <span>Вкусно и точка.</span>
-      </StyledHeaderLogo>
-      <StyledCartBlock>
-        <CartLogo />
-      </StyledCartBlock>
-    </StyledHeader>
-  );
+interface HeaderProps {
+	store?: IStore
+}
+
+export const Header: FC<HeaderProps> = observer((props) => {
+	const {setSelectedCategoryId, isCartOpened, setCartIsOpen} = props.store
+
+	const selectCategory = useCallback(() => {
+		setSelectedCategoryId(0);
+	}, []);
+
+	const changeCartState = useCallback(() => {
+		setCartIsOpen(!isCartOpened)
+	}, [isCartOpened]);
+
+	return (
+		<StyledHeader>
+			<StyledHeaderLogo onClick={selectCategory}>
+				<StyledLogoIcon>
+					<LogoIcon/>
+				</StyledLogoIcon>
+				<span>Вкусно и точка.</span>
+			</StyledHeaderLogo>
+			<StyledCartBlock onClick={changeCartState}>
+				<CartLogo/>
+			</StyledCartBlock>
+		</StyledHeader>
+	);
 });

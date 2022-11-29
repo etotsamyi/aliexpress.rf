@@ -1,34 +1,28 @@
 {
-  "name": "aliexpress.rf",
-  "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "start": "next start"
   },
   "dependencies": {
-    "@types/node": "18.11.9",
-    "@types/react": "18.0.25",
-    "@types/react-dom": "18.0.9",
     "axios": "^1.2.0",
-    "mobx": "^6.7.0",
-    "mobx-react-lite": "^3.4.0",
-    "mobx-state-tree": "^5.1.6",
-    "next": "13.0.5",
-    "prettier": "^2.8.0",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
+    "mobx": "^5.9.0",
+    "mobx-react": "^5.4.3",
+    "mobx-react-lite": "^2.0.7",
+    "mobx-state-tree": "^3.11.0",
+    "next": "latest",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "react-loading": "^2.0.3",
     "styled-components": "^5.3.6",
-    "typescript": "4.9.3"
+    "typescript": "^3.0.1"
   },
   "devDependencies": {
-    "@types/styled-components": "^5.1.26",
-    "@typescript-eslint/eslint-plugin": "^5.44.0",
-    "@typescript-eslint/parser": "^5.44.0",
-    "eslint": "^8.28.0",
-    "eslint-plugin-react": "^7.31.11"
+    "@babel/core": "7.14.3",
+    "@babel/plugin-proposal-decorators": "^7.3.0",
+    "@types/node": "^14.0.23",
+    "@types/react": "^16.4.12",
+    "babel-plugin-styled-components": "^2.0.7"
   }
 }
