@@ -8,7 +8,6 @@ export default function App({Component, pageProps}) {
 	const store = useStore(pageProps.initialState);
 
 	useLayoutEffect(() => {
-		//
 		setTimeout(() => {
 			store.fetchData().then((data) => store.constructStorage(data)).then(store.initializeCartFromLocalStorage);
 		}, 2000);
