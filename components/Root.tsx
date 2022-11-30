@@ -16,7 +16,6 @@ const Main = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: auto;
   height: calc(100vh - 45px);
 `;
 
@@ -26,11 +25,11 @@ const Root: React.FC<RootProps> = observer((props) => {
 	return (
 		<div>
 			<>
-				<Header store={store} />
+				<Header store={store}/>
 				{/*<span>{store.currencyRate}</span>*/}
 				<Main>
 					{store.isLoading && !store.storage?.length ? (
-						<ReactLoading type={"bars"} width={100} color={"#4385ff"} />
+						<ReactLoading type={"bars"} width={100} color={"#4385ff"}/>
 					) : null}
 					{props.children}
 				</Main>

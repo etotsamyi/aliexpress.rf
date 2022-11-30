@@ -99,7 +99,7 @@ export const Header: FC<HeaderProps> = observer((props) => {
 				<StyledLogoIcon>
 					<LogoIcon/>
 				</StyledLogoIcon>
-				<span>Вкусно и точка.</span>
+				<span>Алиэкспресс</span>
 			</StyledHeaderLogo>
 			<StyledCartBlock onClick={changeCartState}>
 				<CartLogo/>

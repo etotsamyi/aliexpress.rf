@@ -6,7 +6,9 @@
     "start": "next start"
   },
   "dependencies": {
+    "@types/styled-components": "^5.1.26",
     "axios": "^1.2.0",
+    "fs": "^0.0.1-security",
     "mobx": "^5.9.0",
     "mobx-react": "^5.4.3",
     "mobx-react-lite": "^2.0.7",

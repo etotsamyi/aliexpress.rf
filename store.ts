@@ -1,8 +1,9 @@
 import {useMemo} from 'react';
-import {applySnapshot, flow, Instance, SnapshotIn, SnapshotOut, types,} from 'mobx-state-tree';
+import {applySnapshot, cast, flow, Instance, types} from 'mobx-state-tree';
 import {IProducts} from "./api/types";
 import Fields = IProducts.Fields;
 import {Api} from "./api/api";
+import LocalStorage from "./localStorage/LocalStorage";
 
 export const Product = types.model({
 	name: types.string,
@@ -17,27 +18,92 @@ export const Category = types.model({
 	products: types.array(Product),
 })
 
+export const CartElement = types.model({
+	groupId: types.number,
+	id: types.number,
+	amount: types.number,
+})
+
 let store: IStore | undefined;
 
 class IStorageCategory {
 	products: any;
 }
 
-// public storage: IStorageCategory[] | null = null;
-// public isLoading: boolean = true;
-// public error: string | null = null;
-// public currencyRate: number;
+export enum Direction {
+	Up = 'up',
+	Down = 'down',
+	Same = 'same'
+}
 
 const Store = types
 	.model({
 		currencyRate: types.number,
+		direction: types.string,
 		error: types.string,
 		isLoading: types.boolean,
 		storage: types.array(Category),
 		selectedCategoryId: types.number,
 		isCartOpened: types.boolean,
+		cart: types.array(CartElement)
 	})
 	.actions((self) => {
+		const setCurrencyRate = (value: number) => {
+			if (self.currencyRate > value) {
+				self.direction = Direction.Down
+			} else if (self.currencyRate === value || self.currencyRate === 0) {
+				self.direction = Direction.Same
+			} else {
+				self.direction = Direction.Up
+			}
+
+			self.currencyRate = value;
+			LocalStorage.add('currency', value);
+		}
+
+		const addProductToCart = (groupId: number, id: number) => {
+			const existingIndex = self.cart.findIndex((element) => element.id === id && element.groupId === groupId);
+
+			if (existingIndex > -1) {
+				self.cart[existingIndex].amount += 1;
+				LocalStorage.add('cart', self.cart)
+				return;
+			}
+
+			self.cart.push({groupId, id, amount: 1})
+			LocalStorage.add('cart', self.cart)
+		}
+
+		const removeProductFromCart = (groupId: number, id: number) => {
+			const existingIndex = self.cart.findIndex((element) => element.id === id && element.groupId === groupId);
+
+			if (existingIndex === -1) return;
+
+			if (self.cart[existingIndex].amount === 1) {
+				const newCart = self.cart.filter((element) => !(element.id === id && element.groupId === groupId));
+				self.cart = cast(newCart)
+				LocalStorage.add('cart', self.cart)
+				return;
+			}
+			self.cart[existingIndex].amount -= 1;
+			LocalStorage.add('cart', self.cart)
+		}
+
+		const initializeCartFromLocalStorage = () => {
+			if (typeof window === 'undefined') return;
+			const localCart = LocalStorage.get<Instance<typeof CartElement>[]>('cart');
+			const localCurrencyRate = LocalStorage.get<number>('currency')
+
+			if (localCart.length) {
+				self.cart = localCart as any;
+				self.isCartOpened = true;
+			}
+
+			if (localCurrencyRate) {
+				self.currencyRate = localCurrencyRate
+			}
+		}
+
 		const setLoading = (value: boolean) => {
 			self.isLoading = value;
 		}
@@ -103,8 +169,9 @@ const Store = types
 				setLoading(false);
 				return data;
 			} catch (err) {
+				console.log(err)
 				setLoading(false);
-				setError(err.error.toString());
+				setError(err.error?.toString());
 			}
 		})
 
@@ -113,32 +180,31 @@ const Store = types
 			constructStorage,
 			setLoading,
 			setSelectedCategoryId,
-			setCartIsOpen
+			setCartIsOpen,
+			addProductToCart,
+			removeProductFromCart,
+			setCurrencyRate,
+			initializeCartFromLocalStorage
 		};
 	});
 
 export type IStore = Instance<typeof Store>;
-export type IStoreSnapshotIn = SnapshotIn<typeof Store>;
-export type IStoreSnapshotOut = SnapshotOut<typeof Store>;
 
 export function initializeStore(snapshot = null) {
 	const _store = store ?? Store.create({
 		isLoading: true,
 		error: '',
 		currencyRate: 0,
+		direction: Direction.Same,
 		selectedCategoryId: 0,
-		isCartOpened: false
+		isCartOpened: false,
+		cart: []
 	});
-	// store?.fetchData();
 
-	// If your page has Next.js data fetching methods that use a Mobx store, it will
-	// get hydrated here, check `pages/ssg.tsx` and `pages/ssr.tsx` for more details
 	if (snapshot) {
 		applySnapshot(_store, snapshot);
 	}
-	// For SSG and SSR always create a new store
 	if (typeof window === 'undefined') return _store;
-	// Create the store once in the client
 	if (!store) store = _store;
 
 	return store;
