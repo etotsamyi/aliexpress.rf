@@ -158,18 +158,15 @@ const Store = types
 				});
 				newStorage.push(category);
 			});
-			console.log(newStorage, "builder");
 			self.storage = newStorage as any;
 		};
 
 		const fetchData = flow(function* () {
 			try {
 				const data = yield new Api().getFullData();
-				// updateStorage(constructStorage(data));
 				setLoading(false);
 				return data;
 			} catch (err) {
-				console.log(err)
 				setLoading(false);
 				setError(err.error?.toString());
 			}
