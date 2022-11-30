@@ -1,4 +1,3 @@
-import axios, {AxiosResponse} from "axios";
 import {INames, IProducts} from "./types";
 import names from '../json/names.json'
 import products from '../json/products.json'
