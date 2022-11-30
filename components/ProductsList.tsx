@@ -31,7 +31,7 @@ export const ProductsList: FC<ProductsListProps> = observer(({
 				const productInCart = cart.find((element) =>
 					element.id === product.id && element.groupId === selectedCategory.groupId)
 
-				const shouldBeDisabled = product.amount >= productInCart?.amount
+				const shouldBeDisabled = product.amount === productInCart?.amount
 				return <ProductCard
 					key={product.id}
 					categoryId={selectedCategory.groupId}
