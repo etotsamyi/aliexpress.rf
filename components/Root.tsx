@@ -6,8 +6,9 @@ import {Header} from "./Header";
 import styled from "styled-components";
 
 interface RootProps {
-	store?: IStore
-	title: string
+	store?: IStore;
+	title: string;
+	children: React.ReactNode
 }
 
 const Main = styled.div`
